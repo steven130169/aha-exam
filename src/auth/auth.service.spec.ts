@@ -1,18 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 
+class UserEntity {
+  email: string;
+  password: string;
+}
+
 describe('AuthService', () => {
-  let service: AuthService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [AuthService],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = module.get<AuthService>(AuthService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('should be create user successful', () => {
+    const email = 'sample@example.com';
+    const password = 'password';
+    const user: UserEntity = {
+      email: email,
+      password: password,
+    };
+    expect(authService.createUser(email, password)).toEqual(user);
   });
 });
