@@ -20,6 +20,7 @@ describe('AuthService', () => {
     userRepository = datasource.getRepository(UserEntity);
   });
   beforeEach(async () => {
+    await userRepository.delete({});
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -43,7 +44,7 @@ describe('AuthService', () => {
     const sameEmail = 'sample@example.com';
     await authService.createUser(email, password);
     await expect(authService.createUser(sameEmail, password)).rejects.toThrow(
-      'This email already exists.',
+      `This email is already exists.`,
     );
   });
 });
