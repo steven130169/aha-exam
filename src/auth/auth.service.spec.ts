@@ -33,10 +33,17 @@ describe('AuthService', () => {
     await datasource.destroy();
   });
 
+  const email = 'sample@example.com';
+  const password = 'password';
   it('should be create user successful', async () => {
-    const email = 'sample@example.com';
-    const password = 'password';
     await authService.createUser(email, password);
     expect(await userRepository.findOneBy({ email })).toMatchObject({ email });
+  });
+  it('should be throw error if email is duplicate', async function () {
+    const sameEmail = 'sample@example.com';
+    await authService.createUser(email, password);
+    await expect(authService.createUser(sameEmail, password)).rejects.toThrow(
+      'This email already exists.',
+    );
   });
 });
