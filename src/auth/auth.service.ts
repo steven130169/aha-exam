@@ -3,17 +3,22 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthSignInDto } from './dto/auth-signIn.dto';
+import { JwtPayloadInterface } from './jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger('AuthService', { timestamp: true });
 
   constructor(
+    private jwtService: JwtService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
   ) {}
@@ -41,7 +46,22 @@ export class AuthService {
     }
   }
 
-  async signIn(email: string, password: string) {
-    return undefined;
+  async signIn(authSignInDto: AuthSignInDto): Promise<{ accessToken: string }> {
+    const { email, password } = authSignInDto;
+
+    let user: UserEntity;
+    try {
+      user = await this.userRepository.findOneBy({ email, password });
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload: JwtPayloadInterface = { email };
+      const accessToken: string = this.jwtService.sign(payload);
+      return { accessToken };
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }

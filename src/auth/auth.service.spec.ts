@@ -1,15 +1,23 @@
+import * as bcrypt from 'bcrypt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UserEntity } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { QueryFailedError } from 'typeorm';
+import { AuthSignInDto } from './dto/auth-signIn.dto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let userRepository;
+  let jwtService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn() },
+        },
         AuthService,
         {
           provide: getRepositoryToken(UserEntity),
@@ -19,6 +27,7 @@ describe('AuthService', () => {
     }).compile();
     authService = module.get<AuthService>(AuthService);
     userRepository = module.get(getRepositoryToken(UserEntity));
+    jwtService = module.get<JwtService>(JwtService);
   });
   const email = 'sample@example.com';
   const password = 'password';
@@ -45,7 +54,17 @@ describe('AuthService', () => {
     );
   });
   it('should be find one user successful', async function () {
-    await authService.signUp(email, password);
-    expect(await authService.signIn(email, password)).toEqual('accessToken');
+    const authSignInDto: AuthSignInDto = {
+      email: email,
+      password: password,
+    };
+    const genSalt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, genSalt);
+
+    mockUserRepository.findOneBy = jest
+      .fn()
+      .mockResolvedValue({ email: email, password: hashedPassword });
+    await authService.signIn(authSignInDto);
+    expect(jwtService.sign).toHaveBeenCalledTimes(1);
   });
 });
