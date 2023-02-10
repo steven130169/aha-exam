@@ -9,9 +9,7 @@ describe('AuthController (e2e)', () => {
   let app: INestApplication;
 
   const authService = {
-    findAll: () => {
-      return 'test';
-    },
+    createUser: jest.fn().mockImplementationOnce(() => Promise.resolve()),
   };
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
