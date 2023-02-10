@@ -2,40 +2,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UserEntity } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let userRepository: Repository<UserEntity>;
-  let datasource: DataSource;
-  beforeAll(async () => {
-    datasource = new DataSource({
-      type: 'sqlite',
-      database: ':memory:',
-      dropSchema: true,
-      entities: [UserEntity],
-      synchronize: true,
-    });
-    await datasource.initialize();
-    userRepository = datasource.getRepository(UserEntity);
-  });
+  let userRepository;
   beforeEach(async () => {
-    await userRepository.delete({});
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: getRepositoryToken(UserEntity), useValue: userRepository },
+        {
+          provide: getRepositoryToken(UserEntity),
+          useValue: mockUserRepository,
+        },
       ],
     }).compile();
-
     authService = module.get<AuthService>(AuthService);
+    userRepository = module.get(getRepositoryToken(UserEntity));
   });
-  afterAll(async () => {
-    await datasource.destroy();
-  });
-
   const email = 'sample@example.com';
   const password = 'password';
+  const mockUserRepository = {
+    findOneBy: jest.fn().mockReturnValue({ email }),
+  };
   it('should be create user successful', async () => {
     await authService.signUp(email, password);
     expect(await userRepository.findOneBy({ email })).toMatchObject({ email });

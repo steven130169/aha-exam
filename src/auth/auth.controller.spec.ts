@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 
 const mockAuthService = {
-  createUser: jest.fn(),
+  signUp: jest.fn(),
 };
 describe('AuthController', () => {
   let controller: AuthController;
