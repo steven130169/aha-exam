@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { AuthService } from '../src/auth/auth.service';
@@ -20,35 +20,46 @@ describe('AuthController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
-  it('/auth/signup', () => {
+  it('/auth/signup', async () => {
     const user: AuthCredentialDto = {
       email: 'sample@example.com',
-      password: 'Password%',
-      retypePassword: 'Password%',
+      password: 'Password5%',
+      retypePassword: 'Password5%',
     };
-    return request(app.getHttpServer())
+    const signupResponse = await request(app.getHttpServer())
       .post('/auth/signup')
-      .send(user)
-      .expect(201);
+      .send(user);
+    expect(signupResponse.statusCode).toEqual(201);
   });
 
-  it('/auth/signup throw 412 ERROR if password and retypePassword not same.', () => {
+  it('/auth/signup throw 412 ERROR if password and retypePassword not same.', async () => {
     const user: AuthCredentialDto = {
       email: 'sample@example.com',
-      password: 'Password%',
-      retypePassword: 'Password5',
+      password: 'Password5%',
+      retypePassword: 'Password5%^',
+    };
+    const signup412Response = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send(user);
+    expect(signup412Response.statusCode).toEqual(412);
+    expect(signup412Response.body.message).toEqual(
+      'Your retypePassword is not correct.',
+    );
+  });
+
+  it('/auth/signup throw 400 ERROR if password is not have number character.', () => {
+    const user: AuthCredentialDto = {
+      email: 'sample@example.com',
+      password: 'password%',
+      retypePassword: 'password%',
     };
     return request(app.getHttpServer())
       .post('/auth/signup')
       .send(user)
-      .expect(412)
-      .then((response) =>
-        expect(response.body.message).toEqual(
-          'Your retypePassword is not correct.',
-        ),
-      );
+      .expect(400);
   });
 });

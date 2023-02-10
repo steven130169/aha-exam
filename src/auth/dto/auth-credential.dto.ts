@@ -11,14 +11,17 @@ export class AuthCredentialDto {
   @IsString()
   @MinLength(8)
   @Matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+\-=<>.,|])[A-Za-z\d~!@#$%^&*()_+\-=<>.,|]{8,}$/,
+    {
+      message:
+        'Your password need at least one lower character, ' +
+        'at least one upper character, ' +
+        'at least one digit character, ' +
+        'at least one special character, ' +
+        'at least 8 characters',
+    },
   )
   password: string;
 
-  @IsString()
-  @MinLength(8)
-  @Matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-  )
   retypePassword: string;
 }
