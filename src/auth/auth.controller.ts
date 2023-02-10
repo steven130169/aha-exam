@@ -18,7 +18,7 @@ export class AuthController {
         'Your retypePassword is not correct.',
       );
     }
-    await this.authService.createUser(
+    await this.authService.signUp(
       authCredentialDto.email,
       authCredentialDto.password,
     );

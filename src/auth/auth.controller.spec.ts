@@ -29,7 +29,7 @@ describe('AuthController', () => {
       retypePassword: 'password',
     };
     await controller.signUp(authCredentialDto);
-    expect(service.createUser).toHaveBeenCalled();
+    expect(service.signUp).toHaveBeenCalled();
   });
   it('should be throw 412 error if user retypePassword is incorrect.', function () {
     const authCredentialDtoNOTCorrect: AuthCredentialDto = {

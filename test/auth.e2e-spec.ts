@@ -2,26 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { AuthService } from '../src/auth/auth.service';
 import { AuthCredentialDto } from '../src/auth/dto/auth-credential.dto';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../src/auth/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
-
-  const authService = {
-    createUser: jest.fn().mockImplementationOnce(() => Promise.resolve()),
-  };
+  let userRepository: Repository<UserEntity>;
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideProvider(AuthService)
-      .useValue(authService)
-      .compile();
-
+    }).compile();
     app = moduleFixture.createNestApplication();
+
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
+    userRepository = moduleFixture.get(getRepositoryToken(UserEntity));
+    await userRepository.delete({});
   });
 
   it('/auth/signup', async () => {
