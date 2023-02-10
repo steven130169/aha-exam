@@ -34,4 +34,21 @@ describe('AuthController (e2e)', () => {
       .send(user)
       .expect(201);
   });
+
+  it('/auth/signup throw 412 ERROR if password and retypePassword not same.', () => {
+    const user: AuthCredentialDto = {
+      email: 'sample@example.com',
+      password: 'Password%',
+      retypePassword: 'Password5',
+    };
+    return request(app.getHttpServer())
+      .post('/auth/signup')
+      .send(user)
+      .expect(412)
+      .then((response) =>
+        expect(response.body.message).toEqual(
+          'Your retypePassword is not correct.',
+        ),
+      );
+  });
 });
