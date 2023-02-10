@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from './user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -16,12 +16,9 @@ export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    private datasource: DataSource,
   ) {}
 
   async signUp(email: string, password: string): Promise<void> {
-    await this.datasource;
-    this.logger.log(this.datasource);
     //crypt password
     const genSalt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, genSalt);
@@ -33,6 +30,7 @@ export class AuthService {
 
     //save into database
     try {
+      this.logger.verbose(`database save ${JSON.stringify(user)}`);
       await this.userRepository.save(user);
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT' || '23505') {
