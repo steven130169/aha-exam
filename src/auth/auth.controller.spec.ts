@@ -26,7 +26,7 @@ describe('AuthController', () => {
     const authCredentialDto: AuthCredentialDto = {
       email: 'sample@example.com',
       password: 'password',
-      reTypePassword: 'password',
+      retypePassword: 'password',
     };
     await controller.signUp(authCredentialDto);
     expect(service.createUser).toHaveBeenCalled();
@@ -35,7 +35,7 @@ describe('AuthController', () => {
     const authCredentialDtoNOTCorrect: AuthCredentialDto = {
       email: 'sample@example.com',
       password: 'password',
-      reTypePassword: '1password',
+      retypePassword: '1password',
     };
     expect(controller.signUp(authCredentialDtoNOTCorrect)).rejects.toThrow(
       'Your retypePassword is not correct.',

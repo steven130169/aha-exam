@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
-    if (authCredentialDto.password !== authCredentialDto.reTypePassword) {
+    if (authCredentialDto.password !== authCredentialDto.retypePassword) {
       throw new PreconditionFailedException(
         'Your retypePassword is not correct.',
       );
