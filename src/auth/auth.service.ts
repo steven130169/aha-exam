@@ -51,7 +51,7 @@ export class AuthService {
 
     let user: UserEntity;
     try {
-      user = await this.userRepository.findOneBy({ email, password });
+      user = await this.userRepository.findOneBy({ email });
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthSignInDto } from './dto/auth-signIn.dto';
+import { PreconditionFailedException } from '@nestjs/common';
 
 const mockAuthService = {
   signUp: jest.fn(),
@@ -40,7 +41,7 @@ describe('AuthController', () => {
       retypePassword: '1password',
     };
     expect(controller.signUp(authCredentialDtoNOTCorrect)).rejects.toThrow(
-      'Your retypePassword is not correct.',
+      PreconditionFailedException,
     );
   });
   it('should be sign in successful', async function () {

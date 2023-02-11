@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpCode,
   Post,
   PreconditionFailedException,
 } from '@nestjs/common';
@@ -19,16 +20,17 @@ export class AuthController {
         'Your retypePassword is not correct.',
       );
     }
-    await this.authService.signUp(
+    return this.authService.signUp(
       authCredentialDto.email,
       authCredentialDto.password,
     );
   }
 
   @Post('signin')
-  async signIn(
+  @HttpCode(200)
+  signIn(
     @Body() authSignInDto: AuthSignInDto,
   ): Promise<{ accessToken: string }> {
-    return await this.authService.signIn(authSignInDto);
+    return this.authService.signIn(authSignInDto);
   }
 }
