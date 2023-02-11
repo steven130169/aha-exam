@@ -6,6 +6,7 @@ import { AuthSignInDto } from './dto/auth-signIn.dto';
 
 const mockAuthService = {
   signUp: jest.fn(),
+  signIn: jest.fn().mockResolvedValue({ accessToken: 'string' }),
 };
 describe('AuthController', () => {
   let controller: AuthController;
@@ -42,12 +43,14 @@ describe('AuthController', () => {
       'Your retypePassword is not correct.',
     );
   });
-  it('should be sign in successful', function () {
+  it('should be sign in successful', async function () {
     const authSignInDto: AuthSignInDto = {
       email: 'sample@example.com',
       password: 'Password%5',
     };
 
-    expect(controller.signIn(authSignInDto)).toEqual({ accessToken: 'string' });
+    expect(await controller.signIn(authSignInDto)).toEqual({
+      accessToken: 'string',
+    });
   });
 });

@@ -25,7 +25,10 @@ export class AuthController {
     );
   }
 
-  signIn(authSignInDto: AuthSignInDto) {
-    return undefined;
+  @Post('signin')
+  async signIn(
+    @Body() authSignInDto: AuthSignInDto,
+  ): Promise<{ accessToken: string }> {
+    return await this.authService.signIn(authSignInDto);
   }
 }
