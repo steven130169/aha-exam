@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthService } from './auth.service';
+import { AuthSignInDto } from './dto/auth-signIn.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,5 +23,9 @@ export class AuthController {
       authCredentialDto.email,
       authCredentialDto.password,
     );
+  }
+
+  signIn(authSignInDto: AuthSignInDto) {
+    return undefined;
   }
 }

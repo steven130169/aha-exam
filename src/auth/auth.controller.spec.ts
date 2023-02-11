@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { AuthSignInDto } from './dto/auth-signIn.dto';
 
 const mockAuthService = {
   signUp: jest.fn(),
@@ -40,5 +41,13 @@ describe('AuthController', () => {
     expect(controller.signUp(authCredentialDtoNOTCorrect)).rejects.toThrow(
       'Your retypePassword is not correct.',
     );
+  });
+  it('should be sign in successful', function () {
+    const authSignInDto: AuthSignInDto = {
+      email: 'sample@example.com',
+      password: 'Password%5',
+    };
+
+    expect(controller.signIn(authSignInDto)).toEqual({ accessToken: 'string' });
   });
 });
