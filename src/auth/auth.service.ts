@@ -39,7 +39,7 @@ export class AuthService {
       await this.userRepository.save(user);
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT' || '23505') {
-        throw new ConflictException('This email is already exists.');
+        throw new ConflictException('This mail is already exists.');
       } else {
         throw new InternalServerErrorException();
       }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailService } from './mail/mail.service';
 import configuration from './config/configuration';
 
 @Module({
@@ -27,5 +28,6 @@ import configuration from './config/configuration';
     }),
     AuthModule,
   ],
+  providers: [MailService],
 })
 export class AppModule {}

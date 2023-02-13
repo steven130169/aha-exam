@@ -42,7 +42,7 @@ describe('AuthService', () => {
     await authService.signUp(email, password);
     expect(await userRepository.findOneBy({ email })).toMatchObject({ email });
   });
-  it('should be throw error if email is duplicate', async function () {
+  it('should be throw error if mail is duplicate', async function () {
     const sameEmail = 'sample@example.com';
     mockUserRepository.save = jest.fn().mockImplementationOnce(() => {
       throw new QueryFailedError(`Query String`, undefined, {
