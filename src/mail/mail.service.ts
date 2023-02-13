@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
   async sendVerification(email: string, token: string): Promise<void> {
     //TODO need to use configService and change localhost to base_url maybe http & 3000port also need to use.
-    const verifyUrl = `http://localhost:3000/verify?token=${token}`;
+    const domainName = this.configService.get('server.domainName');
+    const verifyUrl = `http://${domainName}:3000/verify?token=${token}`;
     await this.mailerService.sendMail({
       to: email,
       subject: `Verify your email`,

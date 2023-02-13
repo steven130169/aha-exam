@@ -3,10 +3,13 @@ import * as Joi from '@hapi/joi';
 
 export default () => {
   const config = {
-    port: process.env.PORT || 3000,
+    server: {
+      port: process.env.PORT,
+      domainName: process.env.DOMAIN_NAME,
+    },
     database: {
-      host: process.env.DB_HOST || 'localhost',
-      port: process.env.DB_PORT || 5432,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       databaseName: process.env.DB_NAME,
@@ -15,6 +18,7 @@ export default () => {
   };
   const schema = Joi.object({
     port: Joi.number().required().default(3000),
+    domainName: Joi.string().required().default('localhost'),
     database: {
       host: Joi.string().required(),
       port: Joi.number().required().default(5432),
