@@ -25,7 +25,7 @@ describe('AuthController (e2e)', () => {
   beforeEach(async () => {
     await userRepository.delete({});
     authCredentialDto = {
-      email: 'sample@example.com',
+      email: 'a09930185@gmail.com',
       password: 'Password5%',
       retypePassword: 'Password5%',
     };

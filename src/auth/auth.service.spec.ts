@@ -50,6 +50,7 @@ describe('AuthService', () => {
   it('should be create user successful', async () => {
     await authService.signUp(email, password);
     expect(await userRepository.findOneBy({ email })).toMatchObject({ email });
+    expect(jwtService.sign).toHaveBeenCalled();
     expect(mailService.sendVerification).toHaveBeenCalled();
   });
   it('should be throw error if mail is duplicate', async function () {

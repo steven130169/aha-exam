@@ -10,11 +10,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   const dataSource = app.get(DataSource);
   const config = app.get(ConfigService);
-  const port = config.get('port');
+  const port = config.get('server.port');
   await app.listen(port);
   logger.log(`Application listen port ${port}`);
   logger.log(
     `Database is connecting with ${JSON.stringify(dataSource.options)}`,
   );
 }
+
 bootstrap();

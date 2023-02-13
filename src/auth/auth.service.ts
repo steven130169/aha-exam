@@ -12,12 +12,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthSignInDto } from './dto/auth-signIn.dto';
 import { JwtPayloadInterface } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger('AuthService', { timestamp: true });
 
   constructor(
+    private mailService: MailService,
     private jwtService: JwtService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -39,14 +41,13 @@ export class AuthService {
       await this.userRepository.save(user);
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT' || '23505') {
-        throw new ConflictException('This mail is already exists.');
+        throw new ConflictException('This email is already exists.');
       } else {
         throw new InternalServerErrorException();
       }
     }
-    //TODO after created user need to send verify email
-    // 1. gen verify token
-    // 2. send verify email
+    const token = this.generateJwtAccessToken(email);
+    await this.mailService.sendVerification(email, token);
   }
 
   async signIn(authSignInDto: AuthSignInDto): Promise<{ accessToken: string }> {
@@ -60,11 +61,15 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayloadInterface = { email };
-      const accessToken: string = this.jwtService.sign(payload);
+      const accessToken = this.generateJwtAccessToken(email);
       return { accessToken };
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  private generateJwtAccessToken(email: string) {
+    const payload: JwtPayloadInterface = { email };
+    return this.jwtService.sign(payload);
   }
 }

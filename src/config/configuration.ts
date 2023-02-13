@@ -15,10 +15,13 @@ export default () => {
       databaseName: process.env.DB_NAME,
     },
     jwtSecret: process.env.JWT_SECRET,
+    sendGridKey: process.env.SENDGRID_API_KEY,
   };
   const schema = Joi.object({
-    port: Joi.number().required().default(3000),
-    domainName: Joi.string().required().default('localhost'),
+    server: {
+      port: Joi.number().required().default(3000),
+      domainName: Joi.string().required().default('localhost'),
+    },
     database: {
       host: Joi.string().required(),
       port: Joi.number().required().default(5432),
@@ -27,6 +30,7 @@ export default () => {
       databaseName: Joi.string().required(),
     },
     jwtSecret: Joi.string().required(),
+    sendGridKey: Joi.string().required(),
   });
   const validateResult = schema.validate(config);
   if (validateResult.error) {
