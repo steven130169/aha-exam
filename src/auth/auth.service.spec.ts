@@ -6,11 +6,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { QueryFailedError } from 'typeorm';
 import { AuthSignInDto } from './dto/auth-signIn.dto';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '../mail/mail.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let userRepository;
   let jwtService;
+  let mailService: MailService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -23,11 +25,18 @@ describe('AuthService', () => {
           provide: getRepositoryToken(UserEntity),
           useValue: mockUserRepository,
         },
+        {
+          provide: MailService,
+          useValue: {
+            sendVerification: jest.fn(),
+          },
+        },
       ],
     }).compile();
     authService = module.get<AuthService>(AuthService);
     userRepository = module.get(getRepositoryToken(UserEntity));
     jwtService = module.get<JwtService>(JwtService);
+    mailService = module.get(MailService);
   });
   const email = 'sample@example.com';
   const password = 'password';
@@ -41,6 +50,7 @@ describe('AuthService', () => {
   it('should be create user successful', async () => {
     await authService.signUp(email, password);
     expect(await userRepository.findOneBy({ email })).toMatchObject({ email });
+    expect(mailService.sendVerification).toHaveBeenCalled();
   });
   it('should be throw error if mail is duplicate', async function () {
     const sameEmail = 'sample@example.com';

@@ -44,6 +44,9 @@ export class AuthService {
         throw new InternalServerErrorException();
       }
     }
+    //TODO after created user need to send verify email
+    // 1. gen verify token
+    // 2. send verify email
   }
 
   async signIn(authSignInDto: AuthSignInDto): Promise<{ accessToken: string }> {
