@@ -3,9 +3,12 @@ import { VerifyController } from './verify.controller';
 import { VerifyService } from './verify.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../auth/user.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([UserEntity]),
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
