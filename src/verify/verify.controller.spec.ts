@@ -47,6 +47,7 @@ describe('VerifyController', () => {
     const accessToken = jwtService.sign({ email });
     await controller.verifyEmail(accessToken, res);
     expect(verifyService.verifyEmail).toHaveBeenCalled();
+    expect(res.redirect).toHaveBeenCalled();
   });
 
   it('should redirect to dashboard when email already have verified.', async function () {

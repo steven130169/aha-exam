@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   InternalServerErrorException,
@@ -17,7 +18,9 @@ export class VerifyController {
     private verifyService: VerifyService,
     private jwtService: JwtService,
   ) {}
+
   private logger = new Logger('verifyController');
+
   @Get(':token')
   async verifyEmail(
     @Param('token') token: string,
@@ -27,11 +30,11 @@ export class VerifyController {
     // when signIn if the email did not have verified return "resend verified email"
     // when signIn have accessToken
     let verifiedResult: UserEntity | string;
+    const decoded = await this.jwtService.verify(token);
+    this.logger.verbose(`Token parse successfully.`);
     try {
-      const decoded = await this.jwtService.verify(token);
-      this.logger.verbose(`Token parse successfully.`);
       verifiedResult = await this.verifyService.verifyEmail(decoded.email);
-      //redirect dashboard
+      res.redirect(`/dashboard`);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -41,7 +44,7 @@ export class VerifyController {
       res.redirect(`/dashboard`);
     }
     if (verifiedResult === `Email did not exists`) {
-      //redirect 400 BadRequest
+      throw new BadRequestException(`Email ${decoded.email} is not exists.`);
     }
   }
 }
