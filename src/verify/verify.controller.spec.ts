@@ -38,14 +38,6 @@ describe('VerifyController', () => {
   });
 
   it('should be verified email if this email is already signUp.', async function () {
-    //TODO:
-    // The User Process:
-    // when user click verify url
-    // parse token get email
-    // ask database if this email has verified?
-    // if true return the user dashboard.( redirect sign in)
-    // else return "Resend Email Verification" button html.
-
     const email = 'sample@example.com';
     const accessToken = jwtService.sign({ email });
     await controller.verifyEmail(accessToken);

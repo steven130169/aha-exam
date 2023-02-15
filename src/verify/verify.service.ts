@@ -21,9 +21,5 @@ export class VerifyService {
     }
     user.isVerified = true;
     return await this.userRepository.save(user);
-
-    //1. has email but did not have verified => change to have verified and return true
-    //2. has email and have verified => throw new Error have verified
-    //3. does not have email => throw new Error does not have this email.
   }
 }
