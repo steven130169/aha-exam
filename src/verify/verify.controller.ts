@@ -9,6 +9,7 @@ import {
 import { VerifyService } from './verify.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '../auth/user.entity';
+import { Response } from 'express';
 
 @Controller('verify')
 export class VerifyController {
@@ -22,6 +23,9 @@ export class VerifyController {
     @Param('token') token: string,
     @Res() res: Response,
   ): Promise<void> {
+    //TODO:
+    // when signIn if the email did not have verified return "resend verified email"
+    // when signIn have accessToken
     let verifiedResult: UserEntity | string;
     try {
       const decoded = await this.jwtService.verify(token);
@@ -34,7 +38,7 @@ export class VerifyController {
     }
 
     if (verifiedResult === `Email is verified`) {
-      //redirect dashboard
+      res.redirect(`/dashboard`);
     }
     if (verifiedResult === `Email did not exists`) {
       //redirect 400 BadRequest
