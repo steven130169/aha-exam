@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VerifyService } from './verify.service';
 import { UserEntity } from '../auth/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException } from '@nestjs/common';
 
 describe('VerifyService', () => {
   let userRepository: {
@@ -43,25 +42,15 @@ describe('VerifyService', () => {
     expect(userRepository.save).toHaveBeenCalled();
   });
 
-  it('should throw BadRequestException when email already have verified.', async function () {
+  it('should return email verified when email already have verified.', async function () {
     const email = 'sample@example.com';
     userRepository.findOneBy.mockResolvedValue({ email, isVerified: true });
-    await expect(service.verifyEmail(email)).rejects.toThrow(
-      BadRequestException,
-    );
-    await expect(service.verifyEmail(email)).rejects.toThrow(
-      `This email: ${email} already have verified.`,
-    );
+    expect(await service.verifyEmail(email)).toEqual(`Email is verified`);
   });
 
-  it('should throw BadRequestException when email did not exists.', async function () {
+  it('should return email did not exists when email did not exists.', async function () {
     const email = 'sample@example.com';
     userRepository.findOneBy.mockResolvedValue(null);
-    await expect(service.verifyEmail(email)).rejects.toThrow(
-      BadRequestException,
-    );
-    await expect(service.verifyEmail(email)).rejects.toThrow(
-      `This email: ${email} didn't exists.`,
-    );
+    expect(await service.verifyEmail(email)).toEqual(`Email did not exists`);
   });
 });

@@ -7,6 +7,7 @@ describe('VerifyController', () => {
   let controller: VerifyController;
   let verifyService: VerifyService;
   let jwtService: JwtService;
+  let res;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -31,6 +32,9 @@ describe('VerifyController', () => {
     controller = module.get<VerifyController>(VerifyController);
     verifyService = module.get(VerifyService);
     jwtService = module.get(JwtService);
+    res = {
+      redirect: jest.fn(),
+    };
   });
 
   it('should be defined', () => {
@@ -40,7 +44,17 @@ describe('VerifyController', () => {
   it('should be verified email if this email is already signUp.', async function () {
     const email = 'sample@example.com';
     const accessToken = jwtService.sign({ email });
-    await controller.verifyEmail(accessToken);
+    await controller.verifyEmail(accessToken, res);
     expect(verifyService.verifyEmail).toHaveBeenCalled();
+  });
+
+  it('should redirect to dashboard when email already have verified.', async function () {
+    const email = 'sample@example.com';
+    const accessToken = jwtService.sign({ email });
+    verifyService.verifyEmail = jest
+      .fn()
+      .mockResolvedValue(`Email is verified`);
+    await controller.verifyEmail(accessToken, res);
+    expect(res.redirect).toHaveBeenCalled();
   });
 });

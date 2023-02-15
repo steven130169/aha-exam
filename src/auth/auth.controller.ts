@@ -28,10 +28,13 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(200)
-  signIn(
+  async signIn(
     @Body() authSignInDto: AuthSignInDto,
   ): Promise<{ accessToken: string }> {
-    //TODO: when signIn if the email did not have verified return "resend verified email"
-    return this.authService.signIn(authSignInDto);
+    //TODO:
+    // when signIn if the email did not have verified return "resend verified email"
+    // when signIn have accessToken
+    const accessToken = await this.authService.signIn(authSignInDto);
+    return { accessToken };
   }
 }

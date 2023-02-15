@@ -7,7 +7,7 @@ import { PreconditionFailedException } from '@nestjs/common';
 
 const mockAuthService = {
   signUp: jest.fn(),
-  signIn: jest.fn().mockResolvedValue({ accessToken: 'string' }),
+  signIn: jest.fn().mockResolvedValue('accessToken'),
 };
 describe('AuthController', () => {
   let controller: AuthController;
@@ -51,7 +51,7 @@ describe('AuthController', () => {
     };
 
     expect(await controller.signIn(authSignInDto)).toEqual({
-      accessToken: 'string',
+      accessToken: 'accessToken',
     });
   });
 });

@@ -50,7 +50,7 @@ export class AuthService {
     await this.mailService.sendVerification(email, token);
   }
 
-  async signIn(authSignInDto: AuthSignInDto): Promise<{ accessToken: string }> {
+  async signIn(authSignInDto: AuthSignInDto): Promise<string> {
     const { email, password } = authSignInDto;
 
     let user: UserEntity;
@@ -61,14 +61,13 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
     if (user && (await bcrypt.compare(password, user.password))) {
-      const accessToken = this.generateJwtAccessToken(email);
-      return { accessToken };
+      return this.generateJwtAccessToken(email);
     } else {
       throw new UnauthorizedException();
     }
   }
 
-  generateJwtAccessToken(email: string) {
+  generateJwtAccessToken(email: string): string {
     const payload: JwtPayloadInterface = { email };
     return this.jwtService.sign(payload);
   }

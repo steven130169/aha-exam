@@ -72,10 +72,30 @@ describe('AuthService', () => {
     const genSalt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, genSalt);
 
-    mockUserRepository.findOneBy = jest
-      .fn()
-      .mockResolvedValue({ email: email, password: hashedPassword });
+    mockUserRepository.findOneBy = jest.fn().mockResolvedValue({
+      email: email,
+      password: hashedPassword,
+      isVerified: false,
+    });
     await authService.signIn(authSignInDto);
     expect(jwtService.sign).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw new Error : this email did not verified', async function () {
+    const authSignInDto: AuthSignInDto = {
+      email: email,
+      password: password,
+    };
+    const genSalt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, genSalt);
+
+    mockUserRepository.findOneBy = jest.fn().mockResolvedValue({
+      email: email,
+      password: hashedPassword,
+      isVerified: false,
+    });
+    await expect(authService.signIn(authSignInDto)).rejects.toThrow(
+      `This email: ${authSignInDto.email} didn't have verified.`,
+    );
   });
 });
