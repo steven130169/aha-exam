@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VerifyController } from './verify.controller';
 import { VerifyService } from './verify.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { BadRequestException } from '@nestjs/common';
 
 describe('VerifyController', () => {
   let controller: VerifyController;
@@ -56,5 +57,19 @@ describe('VerifyController', () => {
       .mockResolvedValue(`Email is verified`);
     await controller.verifyEmail(accessToken, res);
     expect(res.redirect).toHaveBeenCalled();
+  });
+
+  it('should throw BadRequest when email is not exists.', async function () {
+    const email = 'sample@example.com';
+    const accessToken = jwtService.sign({ email });
+    verifyService.verifyEmail = jest
+      .fn()
+      .mockResolvedValue(`Email did not exists`);
+    await expect(controller.verifyEmail(accessToken, res)).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(controller.verifyEmail(accessToken, res)).rejects.toThrow(
+      `Email ${email} is not exists.`,
+    );
   });
 });
