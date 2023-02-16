@@ -26,9 +26,6 @@ export class VerifyController {
     @Param('token') token: string,
     @Res() res: Response,
   ): Promise<void> {
-    //TODO:
-    // when signIn if the email did not have verified return "resend verified email"
-    // when signIn have accessToken
     let verifiedResult: UserEntity | string;
     const decoded = await this.jwtService.verify(token);
     this.logger.verbose(`Token parse successfully.`);

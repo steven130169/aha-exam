@@ -34,4 +34,5 @@ export class AuthController {
     const accessToken = await this.authService.signIn(authSignInDto);
     return { accessToken };
   }
+  //Google OAuth Api link: https://www.googleapis.com/auth/userinfo.email
 }
